@@ -1,0 +1,84 @@
+@model IEnumerable<QuanLyCaThi.Models.ExamTime>
+
+@{
+    ViewData["Title"] = "Index";
+    Layout = "~/Views/Shared/_LayoutAdmin.cshtml";
+}
+
+<h1>Danh sách ca thi</h1>
+
+<p>
+    <a class="btn btn-primary" asp-action="Create">Tạo mới ca thi</a>
+</p>
+<table class="table">
+    <thead>
+        <tr>
+            <th>
+                @Html.DisplayNameFor(model => model.ExamTimeName)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.StartTime)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.FinishTime)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.ExamDate)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.MaxValue)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.RegistedValue)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.Note)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.IsFull)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.Subject.SubjectName)
+            </th>
+            <th></th>
+        </tr>
+    </thead>
+    <tbody>
+@foreach (var item in Model) {
+        <tr>
+            <td>
+                @Html.DisplayFor(modelItem => item.ExamTimeName)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.StartTime)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.FinishTime)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.ExamDate)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.MaxValue)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.RegistedValue)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.Note)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.IsFull)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.Subject.SubjectName)
+            </td>
+            <td>
+                <a asp-action="Edit" asp-route-id="@item.ExamTimeID">Edit</a> |
+                <a asp-action="Details" asp-route-id="@item.ExamTimeID">Details</a> |
+                <a asp-action="Delete" asp-route-id="@item.ExamTimeID">Delete</a>
+            </td>
+        </tr>
+}
+    </tbody>
+</table>

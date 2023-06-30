@@ -1,0 +1,45 @@
+@model QuanLyCaThi.Models.DangKyThi
+
+@{
+    ViewData["Title"] = "Index";
+}
+
+<h1>Đăng ký thi</h1>
+<h2>@ViewBag.infoSuccess</h2>
+<hr>
+<div class="row w3-padding">
+    <form asp-action="Index" class="w3-padding">
+        <div class="w3-row">
+            <div class="w3-col m4 l3 s12 w3-margin-right">
+                <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+                <div class="form-group">
+                    <label class="control-label">Mã Sinh viên</label>
+                    <input asp-for="StudentCode" class="form-control" />
+                    <span asp-validation-for="StudentCode" class="text-danger"></span>
+                </div>
+                <div class="form-group">
+                    <label class="control-label">Họ tên Sinh viên</label>
+                    <input asp-for="FullName" class="form-control" />
+                    <span asp-validation-for="FullName" class="text-danger"></span>
+                </div>
+                <div class="form-group">
+                    <label asp-for="SubjectID" class="control-label">Chọn Học phần đăng ký thi:</label>
+                    <select onchange="GetSubjectGroupByStudentID();" asp-for="SubjectID" class ="form-control" asp-items="ViewBag.SubjectID"></select>
+                </div>
+                <div class="form-group">
+                    <div id="SubjectGroup"></div>
+                </div>
+                <br>
+                
+            </div>
+            <div class="w3-col m7 l8 w3-padding w3-large">
+                <div id="ExamTime"></div>
+            </div>
+        </div>
+        <div class="w3-row w3-margin">
+            <div class="form-group">
+                <input type="submit" value="Đăng ký thi" class="btn btn-primary" />
+            </div>
+        </div>
+    </form>
+</div>

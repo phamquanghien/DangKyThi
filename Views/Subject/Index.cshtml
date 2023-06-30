@@ -1,0 +1,43 @@
+@model IEnumerable<QuanLyCaThi.Models.Subject>
+
+@{
+    ViewData["Title"] = "Index";
+    Layout = "~/Views/Shared/_LayoutAdmin.cshtml";
+}
+
+<h1>Danh sách Học phần</h1>
+
+<p>
+    <a class="btn btn-success" asp-action="Create">Thêm mới Học phần</a>
+</p>
+<table class="table">
+    <thead>
+        <tr>
+            <th>
+                Mã Học phần
+            </th>
+            <th>
+                Tên Học phần
+            </th>
+            <th>
+                Thao tác
+            </th>
+        </tr>
+    </thead>
+    <tbody>
+@foreach (var item in Model) {
+        <tr>
+            <td>
+                @Html.DisplayFor(modelItem => item.SubjectCode)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.SubjectName)
+            </td>
+            <td>
+                <a asp-action="Edit" asp-route-id="@item.SubjectID">Sửa</a> |
+                <a asp-action="Delete" asp-route-id="@item.SubjectID">Xoá</a>
+            </td>
+        </tr>
+}
+    </tbody>
+</table>

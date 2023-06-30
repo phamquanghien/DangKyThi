@@ -6,7 +6,6 @@
     <title>@ViewData["Title"] - QuanLyCaThi</title>
     <link rel="stylesheet" href="~/lib/bootstrap/dist/css/bootstrap.min.css" />
     <link rel="stylesheet" href="~/css/site.css" asp-append-version="true" />
-    <link rel="stylesheet" href="~/css/W3.css" asp-append-version="true" />
     <link rel="stylesheet" href="~/QuanLyCaThi.styles.css" asp-append-version="true" />
 </head>
 <body>
@@ -21,12 +20,20 @@
                 <div class="navbar-collapse collapse d-sm-inline-flex justify-content-between">
                     <ul class="navbar-nav flex-grow-1">
                         <li class="nav-item">
-                            <a class="nav-link text-dark" asp-area="" asp-controller="DangKyThi" asp-action="Index">Đăng ký thi</a>
+                            <a class="nav-link text-dark" asp-area="" asp-controller="Home" asp-action="Index">Home</a>
                         </li>
                         <li class="nav-item">
-                            <a class="nav-link text-dark" asp-area="" asp-controller="TraCuu" asp-action="Index">Xem thông tin đăng ký</a>
+                            <a class="nav-link text-dark" asp-area="" asp-controller="Subject" asp-action="Index">Môn học</a>
                         </li>
-
+                        <li class="nav-item">
+                            <a class="nav-link text-dark" asp-area="" asp-controller="Student" asp-action="Index">Sinh viên</a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link text-dark" asp-area="" asp-controller="ExamTime" asp-action="Index">Ca Thi</a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link text-dark" asp-area="" asp-controller="ListRegisted" asp-action="Index">Danh sách Đăng ký</a>
+                        </li>
                     </ul>
                 </div>
             </div>
@@ -46,7 +53,6 @@
     <script src="~/lib/jquery/dist/jquery.min.js"></script>
     <script src="~/lib/bootstrap/dist/js/bootstrap.bundle.min.js"></script>
     <script src="~/js/site.js" asp-append-version="true"></script>
-    <script src="~/js/MyJS.js"></script>
     @await RenderSectionAsync("Scripts", required: false)
 </body>
 </html>

@@ -1,0 +1,32 @@
+@model QuanLyCaThi.Models.Student
+@{
+    ViewData["Title"] = "Upload";
+    Layout = "~/Views/Shared/_LayoutAdmin.cshtml";
+}
+<h1>Upload danh sách sinh viên từ file Excel</h1>
+<h4>@ViewBag.DuLieu</h4>
+<hr>
+<div class="row">
+    <div class="col-md-4">
+        <form asp-action="Upload" enctype="multipart/form-data">
+            <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+            <div class="form-group">
+                <label class="control-label">Nhập Khoá bảo mật:</label>
+                <input type="password" name="SecurityCode">
+            </div>
+            <div class="form-group">
+                <label asp-for="SubjectID" class="control-label">Chọn môn học:</label>
+                <select asp-for="SubjectID" class ="form-control" asp-items="ViewBag.SubjectID"></select>
+            </div>
+            <div class="form-group">
+                <label>Chọn file Excel:</label>
+                <input name="file" type="file" class="form-control">
+                <br>
+            </div>
+            <div class="form-group">
+                <input type="submit" value="Upload" class="btn btn-primary">
+                <a asp-action="Index" class="btn btn-info">Back to list</a>
+            </div>
+        </form>
+    </div>
+</div>

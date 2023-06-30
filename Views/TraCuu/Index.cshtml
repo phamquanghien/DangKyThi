@@ -1,0 +1,21 @@
+<h2>Tra cứu thông tin đăng ký ca thi</h2>
+<hr>
+<h3 class="w3-text-blue">@ViewBag.Result</h3>
+<div class="w3-row">
+    <div class="col-md-4">
+        <form asp-action="Index">
+            <div class="form-group">
+                <label class="control-label">Nhập mã sinh viên:</label>
+                <input class="form-control" required type="text" name="StudentCode">
+            </div>
+            <div class="form-group">
+                <label class="control-label">Chọn Môn học:</label>
+                <select required name="SubjectID" class ="form-control" asp-items="ViewBag.SubjectID"></select>
+            </div>
+            <br>
+            <div class="form-group">
+                <input type="submit" value="Tra cứu" class="btn btn-primary">
+            </div>
+        </form>
+    </div>
+</div>
