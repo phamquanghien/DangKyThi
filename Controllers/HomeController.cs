@@ -1,5 +1,6 @@
 ﻿using System.Diagnostics;
 using Microsoft.AspNetCore.Mvc;
+using QuanLyCaThi.Data;
 using QuanLyCaThi.Models;
 using QuanLyCaThi.Models.Process;
 
@@ -19,6 +20,9 @@ public class HomeController : Controller
 
     public IActionResult Index()
     {
+        // var check = checkSKey.CheckSecurity(1,"12312300");
+        // var check2 = checkSKey.CheckSecurity(2,"123123");
+        // ViewBag.Result = check + "-" + check2;
         return View();
     }
 

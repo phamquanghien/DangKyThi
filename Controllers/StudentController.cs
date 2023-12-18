@@ -5,6 +5,7 @@ using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
+using QuanLyCaThi.Data;
 using QuanLyCaThi.Models;
 using QuanLyCaThi.Models.Process;
 
@@ -13,16 +14,48 @@ namespace QuanLyCaThi.Controllers
     public class StudentController : Controller
     {
         private readonly ApplicationDbContext _context;
+        private readonly CheckSecurityKey _checkSecurityKey;
         private ExcelProcess _excelProcess = new ExcelProcess();
         private StringProcess _strPro = new StringProcess();
-
-        public StudentController(ApplicationDbContext context)
+        public StudentController(ApplicationDbContext context, CheckSecurityKey checkSecurityKey)
         {
             _context = context;
+            _checkSecurityKey = checkSecurityKey;
+        }
+        public ActionResult Index(Guid? sID, string? subjectGroup)
+        {
+            var students = _context.Student.ToList();
+
+            if (sID.HasValue)
+            {
+                students = students.Where(m => m.SubjectID == sID).ToList();
+            }
+            if(!string.IsNullOrEmpty(subjectGroup))
+            {
+                students = students.Where(m => m.SubjectGroup == subjectGroup).ToList();
+            }
+
+            var model = new StudentSubjectVM
+            {
+                Student = students.ToList(),
+                Subject = _context.Subject.ToList()
+            };
+
+            return View(model);
+        }
+        public JsonResult GetSubjectGroupBySubjectID(Guid subjectID)
+        {
+            var subjectGroupBySubject = (from e in _context.Student
+                        where e.SubjectID == subjectID
+                        select e.SubjectGroup).Distinct().OrderBy(m => m).ToList();
+            // var examTimeBySubject = _context.ExamTime.Where(m => m.SubjectID == subjectID);
+                                
+            return Json(subjectGroupBySubject);
+            // return Json(new {Group =subjectGroupBySubject, time = examTimeBySubject});
         }
 
         // GET: Student
-        public async Task<IActionResult> Index()
+        public async Task<IActionResult> Index2()
         {
             var applicationDbContext = _context.Student.Include(s => s.Subject);
             return View(await applicationDbContext.ToListAsync());
@@ -59,15 +92,30 @@ namespace QuanLyCaThi.Controllers
         // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Create([Bind("StudentID,StudentCode,FirstName,LastName,FullName,BirthDay,SubjectGroup,IsActive,SubjectID")] Student student)
+        public async Task<IActionResult> Create([Bind("StudentID,StudentCode,FirstName,LastName,FullName,SubjectGroup,IsActive,SubjectID")] Student student, string SecurityCode)
         {
-            if (ModelState.IsValid)
+            student.IsActive = true;
+            student.FullName = _strPro.LocDau(student.FirstName.Trim()) + " " + _strPro.LocDau(student.LastName.Trim());
+            if(string.IsNullOrEmpty(SecurityCode))
             {
-                student.StudentID = Guid.NewGuid();
-                _context.Add(student);
-                await _context.SaveChangesAsync();
-                return RedirectToAction(nameof(Index));
+                ModelState.AddModelError("","Mã xác thực không được để trống!");
             }
+            else {
+                var checkKey = _checkSecurityKey.CheckSecurity(1,SecurityCode);
+                if(checkKey==false) {
+                    ModelState.AddModelError("","Mã xác thực không chính xác!");
+                }
+                else {
+                    if (ModelState.IsValid)
+                    {
+                        student.StudentID = Guid.NewGuid();
+                        _context.Add(student);
+                        await _context.SaveChangesAsync();
+                        return RedirectToAction(nameof(Index));
+                    }
+                }
+            }
+            
             ViewData["SubjectID"] = new SelectList(_context.Subject, "SubjectID", "SubjectName", student.SubjectID);
             return View(student);
         }
@@ -94,33 +142,46 @@ namespace QuanLyCaThi.Controllers
         // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Edit(Guid id, [Bind("StudentID,StudentCode,FirstName,LastName,FullName,BirthDay,SubjectGroup,IsActive,SubjectID")] Student student)
+        public async Task<IActionResult> Edit(Guid id, [Bind("StudentID,StudentCode,FirstName,LastName,FullName,BirthDay,SubjectGroup,IsActive,SubjectID")] Student student, string SecurityCode)
         {
             if (id != student.StudentID)
             {
                 return NotFound();
             }
-
-            if (ModelState.IsValid)
+            if(string.IsNullOrEmpty(SecurityCode))
             {
-                try
-                {
-                    _context.Update(student);
-                    await _context.SaveChangesAsync();
-                }
-                catch (DbUpdateConcurrencyException)
-                {
-                    if (!StudentExists(student.StudentID))
-                    {
-                        return NotFound();
-                    }
-                    else
-                    {
-                        throw;
-                    }
-                }
-                return RedirectToAction(nameof(Index));
+                ModelState.AddModelError("","Mã xác thực không được để trống!");
             }
+            else {
+                var checkKey = _checkSecurityKey.CheckSecurity(1,SecurityCode);
+                if(checkKey==false) {
+                    ModelState.AddModelError("","Mã xác thực không chính xác!");
+                }
+                else {
+                    student.FullName = _strPro.LocDau(student.FirstName.Trim()) + " " + _strPro.LocDau(student.LastName.Trim());
+                    if (ModelState.IsValid)
+                    {
+                        try
+                        {
+                            _context.Update(student);
+                            await _context.SaveChangesAsync();
+                        }
+                        catch (DbUpdateConcurrencyException)
+                        {
+                            if (!StudentExists(student.StudentID))
+                            {
+                                return NotFound();
+                            }
+                            else
+                            {
+                                throw;
+                            }
+                        }
+                        return RedirectToAction(nameof(Index));
+                    }
+                }
+            }
+            
             ViewData["SubjectID"] = new SelectList(_context.Subject, "SubjectID", "SubjectName", student.SubjectID);
             return View(student);
         }
@@ -147,20 +208,29 @@ namespace QuanLyCaThi.Controllers
         // POST: Student/Delete/5
         [HttpPost, ActionName("Delete")]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> DeleteConfirmed(Guid id)
+        public async Task<IActionResult> DeleteConfirmed(Guid id, string SecurityCode)
         {
             if (_context.Student == null)
             {
                 return Problem("Entity set 'ApplicationDbContext.Student'  is null.");
             }
             var student = await _context.Student.FindAsync(id);
-            if (student != null)
+            if(string.IsNullOrEmpty(SecurityCode))
             {
-                _context.Student.Remove(student);
+                ModelState.AddModelError("","Mã xác thực không được để trống!");
             }
-            
-            await _context.SaveChangesAsync();
-            return RedirectToAction(nameof(Index));
+            else {
+                var checkKey = _checkSecurityKey.CheckSecurity(1,SecurityCode);
+                if(checkKey==false) {
+                    ModelState.AddModelError("","Mã xác thực không chính xác!");
+                } else if (student != null)
+                {
+                    _context.Student.Remove(student);
+                    await _context.SaveChangesAsync();
+                    return RedirectToAction(nameof(Index));
+                }
+            }
+            return View(student);
         }
         public async Task<IActionResult> Upload()
         {

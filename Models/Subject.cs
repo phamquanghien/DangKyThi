@@ -8,7 +8,9 @@ namespace QuanLyCaThi.Models
     {
         [Key]
         public Guid SubjectID { get; set; }
+        [Display(Name = "Mã Học phần")]
         public string SubjectCode { get; set; }
+        [Display(Name = "Tên Học phần")]
         public string SubjectName { get; set; }
     }
 }

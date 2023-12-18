@@ -7,6 +7,7 @@ using Microsoft.EntityFrameworkCore;
 using QuanLyCaThi.Models;
 using QuanLyCaThi.Models.Process;
 using System.Linq;
+using QuanLyCaThi.Data;
 
 namespace QuanLyCaThi.Controllers
 {

@@ -1,0 +1,78 @@
+@model IEnumerable<QuanLyCaThi.Models.Student>
+
+@{
+    ViewData["Title"] = "Index";
+    Layout = "~/Views/Shared/_LayoutAdmin.cshtml";
+}
+
+
+
+<div>
+    <b>Danh sách Sinh viên</b>
+    <a class="btn btn-primary w3-right w3-card-4 w3-margin-left" asp-action="Create">+ Add</a>
+    <a class="btn btn-success w3-right w3-card-4" asp-action="Upload">Upload</a>
+</div>
+<hr>
+<div>
+    <div class="form-group">
+        @* <label asp-for="SubjectID" class="control-label">Chọn Học phần đăng ký thi:</label>
+        <select onchange="GetSubjectGroupByStudentID();" asp-for="SubjectID" class ="w3-select w3-border w3-round w3-white w3-padding w3-mobile w3-col w3-large w3-margin-right" asp-items="ViewBag.SubjectID">
+            <option value="-1">Chọn học phần</option>
+        </select> *@
+
+    </div>
+</div>
+<hr>
+<table class="table">
+    <thead>
+        <tr>
+            <th>
+                @Html.DisplayNameFor(model => model.StudentCode)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.FirstName)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.LastName)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.SubjectGroup)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.IsActive)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.Subject.SubjectName)
+            </th>
+            <th></th>
+        </tr>
+    </thead>
+    <tbody>
+@foreach (var item in Model) {
+        <tr>
+            <td>
+                @Html.DisplayFor(modelItem => item.StudentCode)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.FirstName)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.LastName)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.SubjectGroup)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.IsActive)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.Subject.SubjectName)
+            </td>
+            <td>
+                <a asp-action="Edit" asp-route-id="@item.StudentID">Sửa</a> |
+                <a asp-action="Delete" asp-route-id="@item.StudentID">Xoá</a>
+            </td>
+        </tr>
+}
+    </tbody>
+</table>

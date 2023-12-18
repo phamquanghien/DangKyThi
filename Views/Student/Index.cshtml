@@ -1,39 +1,55 @@
-@model IEnumerable<QuanLyCaThi.Models.Student>
-
+@model StudentSubjectVM
 @{
-    ViewData["Title"] = "Index";
     Layout = "~/Views/Shared/_LayoutAdmin.cshtml";
 }
-
-<h1>Danh sách Sinh viên</h1>
-
-<p>
-    <a class="btn btn-primary" asp-action="Create">Thêm mới Sinh viên</a>
-    <a class="btn btn-success" asp-action="Upload">Thêm Sinh viên từ file excel</a>
-</p>
+<div>
+    <b>Danh sách Sinh viên</b>
+    <a class="btn btn-primary w3-right w3-card-4 w3-margin-left" asp-action="Create">+ Add</a>
+    <a class="btn btn-success w3-right w3-card-4" asp-action="Upload">Upload</a>
+</div>
+<hr>
+<div class="w3-row">
+    <form asp-controller="Student" asp-action="Index" method="post">
+        <div class="w3-col l3 w3-margin-right">
+            <select onchange="GetSubjectGroupBySubjectID();" name="sID" id="SubjectID" class="w3-select w3-border w3-round w3-white w3-padding w3-mobile w3-col w3-large w3-margin-right">
+                <option value="">Chọn môn học</option>
+                @foreach (var subject in Model.Subject)
+                {
+                    <option value="@subject.SubjectID">@subject.SubjectName</option>
+                }
+            </select>
+        </div>
+        <div class="w3-col l3 w3-margin-right" id="SubjectGroup"></div>
+        <button class="w3-col l1 w3-btn w3-border w3-border-blue w3-round w3-card-4" type="submit">Lọc</button>
+    </form>
+</div>
+<hr>
 <table class="table">
     <thead>
         <tr>
             <th>
-                @Html.DisplayNameFor(model => model.StudentCode)
+                <label>StudentCode</label>
             </th>
             <th>
-                @Html.DisplayNameFor(model => model.FirstName)
+                <label>FirstName</label>
             </th>
             <th>
-                @Html.DisplayNameFor(model => model.LastName)
+                <label>LastName</label>
             </th>
             <th>
-                @Html.DisplayNameFor(model => model.SubjectGroup)
+                <label>SubjectGroup</label>
             </th>
             <th>
-                @Html.DisplayNameFor(model => model.IsActive)
+                <label>Dự thi</label>
+            </th>
+            <th>
+                <label>Học phần</label>
             </th>
             <th></th>
         </tr>
     </thead>
     <tbody>
-@foreach (var item in Model) {
+@foreach (var item in Model.Student) {
         <tr>
             <td>
                 @Html.DisplayFor(modelItem => item.StudentCode)
@@ -45,9 +61,6 @@
                 @Html.DisplayFor(modelItem => item.LastName)
             </td>
             <td>
-                @Html.DisplayFor(modelItem => item.FullName)
-            </td>
-            <td>
                 @Html.DisplayFor(modelItem => item.SubjectGroup)
             </td>
             <td>
@@ -57,9 +70,8 @@
                 @Html.DisplayFor(modelItem => item.Subject.SubjectName)
             </td>
             <td>
-                <a asp-action="Edit" asp-route-id="@item.StudentID">Edit</a> |
-                <a asp-action="Details" asp-route-id="@item.StudentID">Details</a> |
-                <a asp-action="Delete" asp-route-id="@item.StudentID">Delete</a>
+                <a asp-action="Edit" asp-route-id="@item.StudentID">Sửa</a> |
+                <a asp-action="Delete" asp-route-id="@item.StudentID">Xoá</a>
             </td>
         </tr>
 }
