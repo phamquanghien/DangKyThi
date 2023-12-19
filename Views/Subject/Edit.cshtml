@@ -5,15 +5,20 @@
     Layout = "~/Views/Shared/_LayoutAdmin.cshtml";
 }
 
-<h1>Edit</h1>
-
-<h4>Subject</h4>
+<div>
+    <b>Sửa học phần</b>
+    <a class="btn btn-primary w3-right w3-card-4 w3-margin-left" asp-action="Index">Quay lại</a>
+</div>
 <hr />
 <div class="row">
     <div class="col-md-4">
         <form asp-action="Edit">
             <div asp-validation-summary="ModelOnly" class="text-danger"></div>
             <input type="hidden" asp-for="SubjectID" />
+            <div class="form-group">
+                <label class="control-label">Khoá bảo mật</label>
+                <input type="password" required name="SecurityCode" class="form-control" />
+            </div>
             <div class="form-group">
                 <label asp-for="SubjectCode" class="control-label"></label>
                 <input asp-for="SubjectCode" class="form-control" />

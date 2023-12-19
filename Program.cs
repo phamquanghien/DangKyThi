@@ -10,6 +10,7 @@ builder.Services.AddDbContext<ApplicationDbContext>(options =>
 // Add services to the container.
 builder.Services.AddControllersWithViews();
 builder.Services.AddTransient<CheckSecurityKey>();
+builder.Services.AddTransient<UpdateValue>();
 
 
 var app = builder.Build();

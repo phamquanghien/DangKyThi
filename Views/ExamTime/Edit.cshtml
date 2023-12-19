@@ -13,6 +13,11 @@
         <form asp-action="Edit">
             <div asp-validation-summary="ModelOnly" class="text-danger"></div>
             <input type="hidden" asp-for="ExamTimeID" />
+            <input type="hidden" asp-for="RegistedValue" />
+            <div class="form-group">
+                <label class="control-label">Khoá bảo mật</label>
+                <input type="password" required name="SecurityCode" class="form-control" />
+            </div>
             <div class="form-group">
                 <label asp-for="ExamTimeName" class="control-label">Tên ca thi:</label>
                 <input asp-for="ExamTimeName" class="form-control" />

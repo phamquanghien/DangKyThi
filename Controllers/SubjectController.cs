@@ -7,16 +7,19 @@ using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
 using QuanLyCaThi.Data;
 using QuanLyCaThi.Models;
+using QuanLyCaThi.Models.Process;
 
 namespace QuanLyCaThi.Controllers
 {
     public class SubjectController : Controller
     {
         private readonly ApplicationDbContext _context;
+        private readonly CheckSecurityKey _checkSecurityKey;
 
-        public SubjectController(ApplicationDbContext context)
+        public SubjectController(ApplicationDbContext context, CheckSecurityKey checkSecurityKey)
         {
             _context = context;
+            _checkSecurityKey = checkSecurityKey;
         }
 
         // GET: Subject
@@ -56,8 +59,17 @@ namespace QuanLyCaThi.Controllers
         // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Create([Bind("SubjectID,SubjectCode,SubjectName")] Subject subject)
+        public async Task<IActionResult> Create([Bind("SubjectID,SubjectCode,SubjectName")] Subject subject, string SecurityCode)
         {
+            if(string.IsNullOrEmpty(SecurityCode))
+            {
+                ModelState.AddModelError("","Mã xác thực không được để trống!");
+            } else {
+                var checkKey = _checkSecurityKey.CheckSecurity(1,SecurityCode);
+                if(checkKey==false) {
+                    ModelState.AddModelError("","Mã xác thực không chính xác!");
+                }
+            }
             if (ModelState.IsValid)
             {
                 subject.SubjectID = Guid.NewGuid();
@@ -89,33 +101,45 @@ namespace QuanLyCaThi.Controllers
         // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Edit(Guid id, [Bind("SubjectID,SubjectCode,SubjectName")] Subject subject)
+        public async Task<IActionResult> Edit(Guid id, [Bind("SubjectID,SubjectCode,SubjectName")] Subject subject, string SecurityCode)
         {
             if (id != subject.SubjectID)
             {
                 return NotFound();
             }
-
-            if (ModelState.IsValid)
+            if(string.IsNullOrEmpty(SecurityCode))
             {
-                try
-                {
-                    _context.Update(subject);
-                    await _context.SaveChangesAsync();
+                ModelState.AddModelError("","Mã xác thực không được để trống!");
+            } else {
+                var checkKey = _checkSecurityKey.CheckSecurity(1,SecurityCode);
+                if(checkKey==false) {
+                    ModelState.AddModelError("","Mã xác thực không chính xác!");
                 }
-                catch (DbUpdateConcurrencyException)
-                {
-                    if (!SubjectExists(subject.SubjectID))
+                else {
+                    if (ModelState.IsValid)
                     {
-                        return NotFound();
-                    }
-                    else
-                    {
-                        throw;
+                        try
+                        {
+                            _context.Update(subject);
+                            await _context.SaveChangesAsync();
+                        }
+                        catch (DbUpdateConcurrencyException)
+                        {
+                            if (!SubjectExists(subject.SubjectID))
+                            {
+                                return NotFound();
+                            }
+                            else
+                            {
+                                throw;
+                            }
+                        }
+                        return RedirectToAction(nameof(Index));
                     }
                 }
-                return RedirectToAction(nameof(Index));
             }
+
+            
             return View(subject);
         }
 
@@ -140,20 +164,29 @@ namespace QuanLyCaThi.Controllers
         // POST: Subject/Delete/5
         [HttpPost, ActionName("Delete")]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> DeleteConfirmed(Guid id)
+        public async Task<IActionResult> DeleteConfirmed(Guid id, string SecurityCode)
         {
             if (_context.Subject == null)
             {
                 return Problem("Entity set 'ApplicationDbContext.Subject'  is null.");
             }
             var subject = await _context.Subject.FindAsync(id);
-            if (subject != null)
+            if(string.IsNullOrEmpty(SecurityCode))
             {
-                _context.Subject.Remove(subject);
+                ModelState.AddModelError("","Mã xác thực không được để trống!");
             }
-            
-            await _context.SaveChangesAsync();
-            return RedirectToAction(nameof(Index));
+            else {
+                var checkKey = _checkSecurityKey.CheckSecurity(1,SecurityCode);
+                if(checkKey==false) {
+                    ModelState.AddModelError("","Mã xác thực không chính xác!");
+                } else if (subject != null)
+                {
+                    _context.Subject.Remove(subject);
+                    await _context.SaveChangesAsync();
+                    return RedirectToAction(nameof(Index));
+                }
+            }
+            return View(subject);
         }
 
         private bool SubjectExists(Guid id)

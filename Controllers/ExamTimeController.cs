@@ -7,16 +7,19 @@ using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
 using QuanLyCaThi.Data;
 using QuanLyCaThi.Models;
+using QuanLyCaThi.Models.Process;
 
 namespace QuanLyCaThi.Controllers
 {
     public class ExamTimeController : Controller
     {
         private readonly ApplicationDbContext _context;
+        private readonly CheckSecurityKey _checkSecurityKey;
 
-        public ExamTimeController(ApplicationDbContext context)
+        public ExamTimeController(ApplicationDbContext context, CheckSecurityKey checkSecurityKey)
         {
             _context = context;
+            _checkSecurityKey = checkSecurityKey;
         }
 
         // GET: ExamTime
@@ -57,17 +60,30 @@ namespace QuanLyCaThi.Controllers
         // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Create([Bind("ExamTimeID,ExamTimeName,StartTime,FinishTime,ExamDate,MaxValue,RegistedValue,Note,IsFull,SubjectID")] ExamTime examTime)
+        public async Task<IActionResult> Create([Bind("ExamTimeID,ExamTimeName,StartTime,FinishTime,ExamDate,MaxValue,RegistedValue,Note,IsFull,SubjectID")] ExamTime examTime, string SecurityCode)
         {
             examTime.RegistedValue = 0;
             examTime.IsFull = false;
-            if (ModelState.IsValid)
+            if(string.IsNullOrEmpty(SecurityCode))
             {
-                examTime.ExamTimeID = Guid.NewGuid();
-                _context.Add(examTime);
-                await _context.SaveChangesAsync();
-                return RedirectToAction(nameof(Index));
+                ModelState.AddModelError("","Mã xác thực không được để trống!");
             }
+            else {
+                var checkKey = _checkSecurityKey.CheckSecurity(1,SecurityCode);
+                if(checkKey==false) {
+                    ModelState.AddModelError("","Mã xác thực không chính xác!");
+                }
+                else {
+                    if (ModelState.IsValid)
+                    {
+                        examTime.ExamTimeID = Guid.NewGuid();
+                        _context.Add(examTime);
+                        await _context.SaveChangesAsync();
+                        return RedirectToAction(nameof(Index));
+                    }
+                }
+            }
+            
             ViewData["SubjectID"] = new SelectList(_context.Subject, "SubjectID", "SubjectName", examTime.SubjectID);
             return View(examTime);
         }
@@ -94,33 +110,46 @@ namespace QuanLyCaThi.Controllers
         // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Edit(Guid id, [Bind("ExamTimeID,ExamTimeName,StartTime,FinishTime,ExamDate,MaxValue,RegistedValue,Note,IsFull,SubjectID")] ExamTime examTime)
+        public async Task<IActionResult> Edit(Guid id, [Bind("ExamTimeID,ExamTimeName,StartTime,FinishTime,ExamDate,MaxValue,RegistedValue,Note,IsFull,SubjectID")] ExamTime examTime, string SecurityCode)
         {
             if (id != examTime.ExamTimeID)
             {
                 return NotFound();
             }
-
-            if (ModelState.IsValid)
+            if(string.IsNullOrEmpty(SecurityCode))
             {
-                try
-                {
-                    _context.Update(examTime);
-                    await _context.SaveChangesAsync();
-                }
-                catch (DbUpdateConcurrencyException)
-                {
-                    if (!ExamTimeExists(examTime.ExamTimeID))
-                    {
-                        return NotFound();
-                    }
-                    else
-                    {
-                        throw;
-                    }
-                }
-                return RedirectToAction(nameof(Index));
+                ModelState.AddModelError("","Mã xác thực không được để trống!");
             }
+            else {
+                var checkKey = _checkSecurityKey.CheckSecurity(1,SecurityCode);
+                if(checkKey==false) {
+                    ModelState.AddModelError("","Mã xác thực không chính xác!");
+                }
+                else {
+                    if(examTime.RegistedValue >= examTime.MaxValue) examTime.IsFull = true;
+                    if (ModelState.IsValid)
+                    {
+                        try
+                        {
+                            _context.Update(examTime);
+                            await _context.SaveChangesAsync();
+                        }
+                        catch (DbUpdateConcurrencyException)
+                        {
+                            if (!ExamTimeExists(examTime.ExamTimeID))
+                            {
+                                return NotFound();
+                            }
+                            else
+                            {
+                                throw;
+                            }
+                        }
+                        return RedirectToAction(nameof(Index));
+                    }
+                }
+            }
+
             ViewData["SubjectID"] = new SelectList(_context.Subject, "SubjectID", "SubjectID", examTime.SubjectID);
             return View(examTime);
         }
@@ -147,20 +176,29 @@ namespace QuanLyCaThi.Controllers
         // POST: ExamTime/Delete/5
         [HttpPost, ActionName("Delete")]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> DeleteConfirmed(Guid id)
+        public async Task<IActionResult> DeleteConfirmed(Guid id, string SecurityCode)
         {
             if (_context.ExamTime == null)
             {
                 return Problem("Entity set 'ApplicationDbContext.ExamTime'  is null.");
             }
             var examTime = await _context.ExamTime.FindAsync(id);
-            if (examTime != null)
+            if(string.IsNullOrEmpty(SecurityCode))
             {
-                _context.ExamTime.Remove(examTime);
+                ModelState.AddModelError("","Mã xác thực không được để trống!");
             }
-            
-            await _context.SaveChangesAsync();
-            return RedirectToAction(nameof(Index));
+            else {
+                var checkKey = _checkSecurityKey.CheckSecurity(1,SecurityCode);
+                if(checkKey==false) {
+                    ModelState.AddModelError("","Mã xác thực không chính xác!");
+                } else if (examTime != null)
+                {
+                    _context.ExamTime.Remove(examTime);
+                    await _context.SaveChangesAsync();
+                    return RedirectToAction(nameof(Index));
+                }
+            }
+            return View(examTime);
         }
 
         private bool ExamTimeExists(Guid id)

@@ -4,12 +4,12 @@
     ViewData["Title"] = "Index";
     Layout = "~/Views/Shared/_LayoutAdmin.cshtml";
 }
-
-<h1>Danh sách ca thi</h1>
-
-<p>
-    <a class="btn btn-primary" asp-action="Create">Tạo mới ca thi</a>
-</p>
+<div>
+    <b>Danh sách Ca thi</b>
+    <a class="btn btn-primary w3-right w3-card-4 w3-margin-left" asp-action="Create">+ Add</a>
+    <a class="btn btn-success w3-right w3-card-4" asp-action="Upload">Upload</a>
+</div>
+<hr>
 <table class="table">
     <thead>
         <tr>
@@ -75,7 +75,6 @@
             </td>
             <td>
                 <a asp-action="Edit" asp-route-id="@item.ExamTimeID">Edit</a> |
-                <a asp-action="Details" asp-route-id="@item.ExamTimeID">Details</a> |
                 <a asp-action="Delete" asp-route-id="@item.ExamTimeID">Delete</a>
             </td>
         </tr>

@@ -4,12 +4,11 @@
     ViewData["Title"] = "Index";
     Layout = "~/Views/Shared/_LayoutAdmin.cshtml";
 }
-
-<h1>Danh sách Học phần</h1>
-
-<p>
-    <a class="btn btn-success" asp-action="Create">Thêm mới Học phần</a>
-</p>
+<div>
+    <b>Danh sách học phần</b>
+    <a class="btn btn-primary w3-right w3-card-4 w3-margin-left" asp-action="Create">+ Add</a>
+</div>
+<hr>
 <table class="table">
     <thead>
         <tr>

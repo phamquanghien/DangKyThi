@@ -15,12 +15,14 @@ namespace QuanLyCaThi.Controllers
     {
         private readonly ApplicationDbContext _context;
         private readonly CheckSecurityKey _checkSecurityKey;
+        private readonly UpdateValue _updateValue;
         private ExcelProcess _excelProcess = new ExcelProcess();
         private StringProcess _strPro = new StringProcess();
-        public StudentController(ApplicationDbContext context, CheckSecurityKey checkSecurityKey)
+        public StudentController(ApplicationDbContext context, CheckSecurityKey checkSecurityKey, UpdateValue updateValue)
         {
             _context = context;
             _checkSecurityKey = checkSecurityKey;
+            _updateValue = updateValue;
         }
         public ActionResult Index(Guid? sID, string? subjectGroup)
         {
@@ -37,9 +39,10 @@ namespace QuanLyCaThi.Controllers
 
             var model = new StudentSubjectVM
             {
-                Student = students.ToList(),
+                Student = students.OrderByDescending(m => m.SubjectGroup).ThenBy(m => m.LastName).Take(160).ToList(),
                 Subject = _context.Subject.ToList()
             };
+            ViewBag.countStudent = students.Count;
 
             return View(model);
         }
@@ -249,46 +252,59 @@ namespace QuanLyCaThi.Controllers
                 {
                     ModelState.AddModelError("", "Please choose excel file to upload!");
                 }
-                else if(SecurityCode != "14022004")
+                else if(string.IsNullOrEmpty(SecurityCode))
                 {
-                    ModelState.AddModelError("", "Khoá bảo mật không đúng. Vui lòng thử lại");
+                    ModelState.AddModelError("","Mã xác thực không được để trống!");
                 }
                 else
                 {
-                    var fileName = DateTime.Now.ToShortTimeString() + fileExtension;
-                    var filePath = Path.Combine(Directory.GetCurrentDirectory() + "/Uploads/Excels", fileName);
-                    var fileLocation = new FileInfo(filePath).ToString();
-                    using(var stream = new FileStream(filePath, FileMode.Create))
-                    {
-                        await file.CopyToAsync(stream);
-                        var dt =  _excelProcess.ExcelToDataTable(fileLocation);
-                        for (int i = 0; i < dt.Rows.Count; i++)
+                    var checkKey = _checkSecurityKey.CheckSecurity(1,SecurityCode);
+                    if(checkKey==false) {
+                        ModelState.AddModelError("","Mã xác thực không chính xác!");
+                    } else {
+                        var fileName = DateTime.Now.ToShortTimeString() + fileExtension;
+                        var filePath = Path.Combine(Directory.GetCurrentDirectory() + "/Uploads/Excels", fileName);
+                        var fileLocation = new FileInfo(filePath).ToString();
+                        using(var stream = new FileStream(filePath, FileMode.Create))
                         {
-                            try
+                            await file.CopyToAsync(stream);
+                            var dt =  _excelProcess.ExcelToDataTable(fileLocation);
+                            for (int i = 0; i < dt.Rows.Count; i++)
                             {
-                                var std = new Student();
-                                std.StudentCode = dt.Rows[i][0].ToString();
-                                std.FirstName = dt.Rows[i][1].ToString();
-                                std.LastName = dt.Rows[i][2].ToString();
-                                std.FullName = _strPro.LocDau(std.FirstName.Trim()) + " " + _strPro.LocDau(std.LastName.Trim());
-                                std.SubjectGroup = dt.Rows[i][3].ToString();
-                                if(dt.Rows[i][4].ToString() == "0") std.IsActive = false;
-                                else std.IsActive = true;
-                                std.SubjectID = subjectId;
-                                _context.Student.Add(std);
-                            }catch(Exception ex)
-                            {
-                                ModelState.AddModelError("","File excel không đúng định dạng");
-                                return View();
+                                try
+                                {
+                                    var std = new Student();
+                                    std.StudentCode = dt.Rows[i][0].ToString();
+                                    std.FirstName = dt.Rows[i][1].ToString();
+                                    std.LastName = dt.Rows[i][2].ToString();
+                                    std.FullName = _strPro.LocDau(std.FirstName.Trim()) + " " + _strPro.LocDau(std.LastName.Trim());
+                                    std.SubjectGroup = dt.Rows[i][3].ToString();
+                                    if(dt.Rows[i][4].ToString() == "1") std.IsActive = false;
+                                    else std.IsActive = true;
+                                    std.SubjectID = subjectId;
+                                    _context.Student.Add(std);
+                                }catch(Exception ex)
+                                {
+                                    ModelState.AddModelError("","File excel không đúng định dạng");
+                                    return View();
+                                }
                             }
-                            
+                            await _context.SaveChangesAsync();
+                            return RedirectToAction(nameof(Index));
                         }
-                        await _context.SaveChangesAsync();
-                        return RedirectToAction(nameof(Index));
                     }
                 }
             }
             ModelState.AddModelError("","Vui lòng chọn file Excel để upload.");
+            return View();
+        }
+        public IActionResult DataStandardization()
+        {
+            var message = "";
+            var checkUpdateData = _updateValue.UpdateValueRegisted();
+            if(checkUpdateData == true) message = "Dữ liệu đã được chuẩn hoá thành công";
+            else message = "Dữ liệu đã chuẩn hoá";
+            ViewBag.info = message;
             return View();
         }
         private bool StudentExists(Guid id)
