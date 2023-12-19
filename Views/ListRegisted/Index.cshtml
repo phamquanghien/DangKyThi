@@ -5,11 +5,11 @@
     Layout = "~/Views/Shared/_LayoutAdmin.cshtml";
 }
 
-<h1>Index</h1>
-
-<p>
-    <a asp-action="Create">Create New</a>
-</p>
+<div>
+    <b>Danh sách Sinh viên (@ViewBag.countStudent)</b>
+    <a class="btn btn-primary w3-right w3-card-4 w3-margin-left" asp-action="Create">+ Add</a>
+</div>
+<hr>
 <table class="table">
     <thead>
         <tr>
@@ -29,13 +29,13 @@
 @foreach (var item in Model) {
         <tr>
             <td>
-                @Html.DisplayFor(modelItem => item.Subject.SubjectID)
+                @Html.DisplayFor(modelItem => item.Subject.SubjectName)
             </td>
             <td>
-                @Html.DisplayFor(modelItem => item.Student.StudentID)
+                @Html.DisplayFor(modelItem => item.Student.FullName)
             </td>
             <td>
-                @Html.DisplayFor(modelItem => item.ExamTime.ExamTimeID)
+                @Html.DisplayFor(modelItem => item.ExamTime.ExamTimeName)
             </td>
             <td>
                 <a asp-action="Edit" asp-route-id="@item.ListRegistedID">Edit</a> |

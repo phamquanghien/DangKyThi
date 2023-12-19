@@ -89,6 +89,9 @@ namespace QuanLyCaThi.Controllers
                     }
                 }
             }
+            else{
+                ModelState.AddModelError("", "Vui lòng chọn đầy đủ thông tin để đăng ký ca thi!");
+            }
             ViewData["SubjectID"] = new SelectList(_context.Subject, "SubjectID", "SubjectName", dkt.SubjectID);
             return View();
         }
