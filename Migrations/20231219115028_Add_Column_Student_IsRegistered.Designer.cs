@@ -2,6 +2,7 @@
 using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using QuanLyCaThi.Data;
 
@@ -10,9 +11,11 @@ using QuanLyCaThi.Data;
 namespace QuanLyCaThi.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    partial class ApplicationDbContextModelSnapshot : ModelSnapshot
+    [Migration("20231219115028_Add_Column_Student_IsRegistered")]
+    partial class Add_Column_Student_IsRegistered
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder.HasAnnotation("ProductVersion", "8.0.0");
@@ -60,9 +63,9 @@ namespace QuanLyCaThi.Migrations
                     b.ToTable("ExamTimes");
                 });
 
-            modelBuilder.Entity("QuanLyCaThi.Models.RegisteredList", b =>
+            modelBuilder.Entity("QuanLyCaThi.Models.ListRegisted", b =>
                 {
-                    b.Property<Guid>("RegisteredListID")
+                    b.Property<Guid>("ListRegistedID")
                         .ValueGeneratedOnAdd()
                         .HasColumnType("TEXT");
 
@@ -75,7 +78,7 @@ namespace QuanLyCaThi.Migrations
                     b.Property<Guid>("SubjectID")
                         .HasColumnType("TEXT");
 
-                    b.HasKey("RegisteredListID");
+                    b.HasKey("ListRegistedID");
 
                     b.HasIndex("ExamTimeID");
 
@@ -83,7 +86,7 @@ namespace QuanLyCaThi.Migrations
 
                     b.HasIndex("SubjectID");
 
-                    b.ToTable("RegisteredLists");
+                    b.ToTable("ListRegisteds");
                 });
 
             modelBuilder.Entity("QuanLyCaThi.Models.SecurityCode", b =>
@@ -172,7 +175,7 @@ namespace QuanLyCaThi.Migrations
                     b.Navigation("Subject");
                 });
 
-            modelBuilder.Entity("QuanLyCaThi.Models.RegisteredList", b =>
+            modelBuilder.Entity("QuanLyCaThi.Models.ListRegisted", b =>
                 {
                     b.HasOne("QuanLyCaThi.Models.ExamTime", "ExamTime")
                         .WithMany()

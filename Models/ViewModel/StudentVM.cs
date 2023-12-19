@@ -1,6 +1,6 @@
 namespace QuanLyCaThi.Models
 {
-    public class AllViewModel
+    public class StudentVM
     {
         public Guid ListRegistedID { get; set; }
         public Guid ExamTimeID { get; set; }

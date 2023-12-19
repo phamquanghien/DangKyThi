@@ -3,11 +3,11 @@ using System.ComponentModel.DataAnnotations.Schema;
 
 namespace QuanLyCaThi.Models
 {
-    [Table("ListRegisteds")]
-    public class ListRegisted
+    [Table("RegisteredLists")]
+    public class RegisteredList
     {
         [Key]
-        public Guid ListRegistedID { get; set; }
+        public Guid RegisteredListID { get; set; }
         public Guid ExamTimeID { get; set; }
         public Guid StudentID { get; set; }
         public Guid SubjectID { get; set; }

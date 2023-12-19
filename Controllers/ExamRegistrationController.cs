@@ -11,12 +11,12 @@ using QuanLyCaThi.Data;
 
 namespace QuanLyCaThi.Controllers
 {
-    public class DangKyThiController : Controller
+    public class ExamRegistrationController : Controller
     {
         private readonly ApplicationDbContext _context;
         private StringProcess _strPro = new StringProcess();
 
-        public DangKyThiController(ApplicationDbContext context)
+        public ExamRegistrationController(ApplicationDbContext context)
         {
             _context = context;
         }
@@ -28,7 +28,7 @@ namespace QuanLyCaThi.Controllers
             return View();
         }
         [HttpPost]
-        public async Task<IActionResult> Index(DangKyThi dkt, string subjectGroup)
+        public async Task<IActionResult> Index(ExamRegistration dkt, string subjectGroup)
         {
             if (ModelState.IsValid)
             {
@@ -54,12 +54,12 @@ namespace QuanLyCaThi.Controllers
                             if(examTime != null)
                             {
                                 //tat ca cac thong tin deu hop le => dang ky thi cho sinh vien
-                                var registed = new ListRegisted();
-                                registed.ListRegistedID = Guid.NewGuid();
-                                registed.StudentID = std.StudentID;
-                                registed.SubjectID = dkt.SubjectID;
-                                registed.ExamTimeID = dkt.ExamTimeID;
-                                _context.Add(registed);
+                                var registeredList = new RegisteredList();
+                                registeredList.RegisteredListID = Guid.NewGuid();
+                                registeredList.StudentID = std.StudentID;
+                                registeredList.SubjectID = dkt.SubjectID;
+                                registeredList.ExamTimeID = dkt.ExamTimeID;
+                                _context.Add(registeredList);
                                 //cap nhat thong tin so luong sinh vien da dang ky ca thi
                                 var exTime = await _context.ExamTime.FindAsync(dkt.ExamTimeID);
                                 examTime.RegistedValue = exTime.RegistedValue + 1;
@@ -125,38 +125,38 @@ namespace QuanLyCaThi.Controllers
         // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Create([Bind("ListRegistedID,ExamTimeID,StudentID,SubjectID")] ListRegisted listRegisted)
+        public async Task<IActionResult> Create([Bind("RegisteredListID,ExamTimeID,StudentID,SubjectID")] RegisteredList registeredList)
         {
             if (ModelState.IsValid)
             {
-                listRegisted.ListRegistedID = Guid.NewGuid();
-                _context.Add(listRegisted);
+                registeredList.RegisteredListID = Guid.NewGuid();
+                _context.Add(registeredList);
                 await _context.SaveChangesAsync();
                 return RedirectToAction(nameof(Index));
             }
-            ViewData["ExamTimeID"] = new SelectList(_context.ExamTime, "ExamTimeID", "ExamTimeID", listRegisted.ExamTimeID);
-            ViewData["StudentID"] = new SelectList(_context.Student, "StudentID", "StudentID", listRegisted.StudentID);
-            ViewData["SubjectID"] = new SelectList(_context.Subject, "SubjectID", "SubjectID", listRegisted.SubjectID);
-            return View(listRegisted);
+            ViewData["ExamTimeID"] = new SelectList(_context.ExamTime, "ExamTimeID", "ExamTimeID", registeredList.ExamTimeID);
+            ViewData["StudentID"] = new SelectList(_context.Student, "StudentID", "StudentID", registeredList.StudentID);
+            ViewData["SubjectID"] = new SelectList(_context.Subject, "SubjectID", "SubjectID", registeredList.SubjectID);
+            return View(registeredList);
         }
 
         // GET: ListRegisted/Edit/5
         public async Task<IActionResult> Edit(Guid? id)
         {
-            if (id == null || _context.ListRegisted == null)
+            if (id == null || _context.RegisteredList == null)
             {
                 return NotFound();
             }
 
-            var listRegisted = await _context.ListRegisted.FindAsync(id);
-            if (listRegisted == null)
+            var registeredList = await _context.RegisteredList.FindAsync(id);
+            if (registeredList == null)
             {
                 return NotFound();
             }
-            ViewData["ExamTimeID"] = new SelectList(_context.ExamTime, "ExamTimeID", "ExamTimeID", listRegisted.ExamTimeID);
-            ViewData["StudentID"] = new SelectList(_context.Student, "StudentID", "StudentID", listRegisted.StudentID);
-            ViewData["SubjectID"] = new SelectList(_context.Subject, "SubjectID", "SubjectID", listRegisted.SubjectID);
-            return View(listRegisted);
+            ViewData["ExamTimeID"] = new SelectList(_context.ExamTime, "ExamTimeID", "ExamTimeID", registeredList.ExamTimeID);
+            ViewData["StudentID"] = new SelectList(_context.Student, "StudentID", "StudentID", registeredList.StudentID);
+            ViewData["SubjectID"] = new SelectList(_context.Subject, "SubjectID", "SubjectID", registeredList.SubjectID);
+            return View(registeredList);
         }
 
         // POST: ListRegisted/Edit/5
@@ -164,9 +164,9 @@ namespace QuanLyCaThi.Controllers
         // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Edit(Guid id, [Bind("ListRegistedID,ExamTimeID,StudentID,SubjectID")] ListRegisted listRegisted)
+        public async Task<IActionResult> Edit(Guid id, [Bind("ListRegistedID,ExamTimeID,StudentID,SubjectID")] RegisteredList registeredList)
         {
-            if (id != listRegisted.ListRegistedID)
+            if (id != registeredList.RegisteredListID)
             {
                 return NotFound();
             }
@@ -175,12 +175,12 @@ namespace QuanLyCaThi.Controllers
             {
                 try
                 {
-                    _context.Update(listRegisted);
+                    _context.Update(registeredList);
                     await _context.SaveChangesAsync();
                 }
                 catch (DbUpdateConcurrencyException)
                 {
-                    if (!ListRegistedExists(listRegisted.ListRegistedID))
+                    if (!ListRegistedExists(registeredList.RegisteredListID))
                     {
                         return NotFound();
                     }
@@ -191,25 +191,25 @@ namespace QuanLyCaThi.Controllers
                 }
                 return RedirectToAction(nameof(Index));
             }
-            ViewData["ExamTimeID"] = new SelectList(_context.ExamTime, "ExamTimeID", "ExamTimeID", listRegisted.ExamTimeID);
-            ViewData["StudentID"] = new SelectList(_context.Student, "StudentID", "StudentID", listRegisted.StudentID);
-            ViewData["SubjectID"] = new SelectList(_context.Subject, "SubjectID", "SubjectID", listRegisted.SubjectID);
-            return View(listRegisted);
+            ViewData["ExamTimeID"] = new SelectList(_context.ExamTime, "ExamTimeID", "ExamTimeID", registeredList.ExamTimeID);
+            ViewData["StudentID"] = new SelectList(_context.Student, "StudentID", "StudentID", registeredList.StudentID);
+            ViewData["SubjectID"] = new SelectList(_context.Subject, "SubjectID", "SubjectID", registeredList.SubjectID);
+            return View(registeredList);
         }
 
         // GET: ListRegisted/Delete/5
         public async Task<IActionResult> Delete(Guid? id)
         {
-            if (id == null || _context.ListRegisted == null)
+            if (id == null || _context.RegisteredList == null)
             {
                 return NotFound();
             }
 
-            var listRegisted = await _context.ListRegisted
+            var listRegisted = await _context.RegisteredList
                 .Include(l => l.ExamTime)
                 .Include(l => l.Student)
                 .Include(l => l.Subject)
-                .FirstOrDefaultAsync(m => m.ListRegistedID == id);
+                .FirstOrDefaultAsync(m => m.RegisteredListID == id);
             if (listRegisted == null)
             {
                 return NotFound();
@@ -223,14 +223,14 @@ namespace QuanLyCaThi.Controllers
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> DeleteConfirmed(Guid id)
         {
-            if (_context.ListRegisted == null)
+            if (_context.RegisteredList == null)
             {
-                return Problem("Entity set 'ApplicationDbContext.ListRegisted'  is null.");
+                return Problem("Entity set 'ApplicationDbContext.RegisteredList'  is null.");
             }
-            var listRegisted = await _context.ListRegisted.FindAsync(id);
-            if (listRegisted != null)
+            var registeredList = await _context.RegisteredList.FindAsync(id);
+            if (registeredList != null)
             {
-                _context.ListRegisted.Remove(listRegisted);
+                _context.RegisteredList.Remove(registeredList);
             }
             
             await _context.SaveChangesAsync();
@@ -239,7 +239,7 @@ namespace QuanLyCaThi.Controllers
 
         private bool ListRegistedExists(Guid id)
         {
-          return (_context.ListRegisted?.Any(e => e.ListRegistedID == id)).GetValueOrDefault();
+          return (_context.RegisteredList?.Any(e => e.RegisteredListID == id)).GetValueOrDefault();
         }
     }
 }

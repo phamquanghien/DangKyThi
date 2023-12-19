@@ -13,7 +13,7 @@ namespace QuanLyCaThi.Data;
         {
         }
         public DbSet<ExamTime> ExamTime { get; set; } = default!;
-        public DbSet<ListRegisted> ListRegisted { get; set; } = default!;
+        public DbSet<RegisteredList> RegisteredList { get; set; } = default!;
         public DbSet<Student> Student { get; set; } = default!;
         public DbSet<Subject> Subject { get; set; } = default!;
         public DbSet<SecurityCode> SecurityCode { get; set; } = default!;

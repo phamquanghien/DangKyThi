@@ -1,4 +1,4 @@
-@model IEnumerable<QuanLyCaThi.Models.ListRegisted>
+@model IEnumerable<QuanLyCaThi.Models.RegisteredList>
 
 @{
     ViewData["Title"] = "Index";
@@ -45,7 +45,7 @@
                 @Html.DisplayFor(modelItem => item.ExamTime.ExamTimeName)
             </td>
             <td>
-                <a asp-action="Edit" asp-route-id="@item.ListRegistedID">Chuyển ca thi</a>
+                <a asp-action="Edit" asp-route-id="@item.RegisteredListID">Chuyển ca thi</a>
             </td>
         </tr>
 }

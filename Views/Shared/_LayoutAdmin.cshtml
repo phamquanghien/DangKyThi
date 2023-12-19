@@ -14,7 +14,7 @@
     <header>
         <nav class="navbar navbar-expand-sm navbar-toggleable-sm navbar-light bg-white border-bottom box-shadow mb-3">
             <div class="container-fluid">
-                <a class="navbar-brand" asp-area="" asp-controller="DangKyThi" asp-action="Index">Đăng ký thi</a>
+                <a class="navbar-brand" asp-area="" asp-controller="ExamRegistration" asp-action="Index">Đăng ký thi</a>
                 <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target=".navbar-collapse" aria-controls="navbarSupportedContent"
                         aria-expanded="false" aria-label="Toggle navigation">
                     <span class="navbar-toggler-icon"></span>
@@ -31,7 +31,10 @@
                             <a class="nav-link text-dark" asp-area="" asp-controller="ExamTime" asp-action="Index">Ca Thi</a>
                         </li>
                         <li class="nav-item">
-                            <a class="nav-link text-dark" asp-area="" asp-controller="ListRegisted" asp-action="Index">Danh sách Đăng ký</a>
+                            <a class="nav-link text-dark" asp-area="" asp-controller="RegisteredList" asp-action="Index">Danh sách Đăng ký</a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link text-dark" asp-area="" asp-controller="Download" asp-action="Index">Download</a>
                         </li>
                     </ul>
                 </div>

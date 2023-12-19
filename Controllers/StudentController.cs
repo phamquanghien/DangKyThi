@@ -95,9 +95,10 @@ namespace QuanLyCaThi.Controllers
         // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Create([Bind("StudentID,StudentCode,FirstName,LastName,FullName,SubjectGroup,IsActive,SubjectID")] Student student, string SecurityCode)
+        public async Task<IActionResult> Create([Bind("StudentID,StudentCode,FirstName,LastName,FullName,SubjectGroup,IsActive,IsRegistered,SubjectID")] Student student, string SecurityCode)
         {
             student.IsActive = true;
+            student.IsRegistered = false;
             student.FullName = _strPro.LocDau(student.FirstName.Trim()) + " " + _strPro.LocDau(student.LastName.Trim());
             if(string.IsNullOrEmpty(SecurityCode))
             {
@@ -145,7 +146,7 @@ namespace QuanLyCaThi.Controllers
         // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Edit(Guid id, [Bind("StudentID,StudentCode,FirstName,LastName,FullName,BirthDay,SubjectGroup,IsActive,SubjectID")] Student student, string SecurityCode)
+        public async Task<IActionResult> Edit(Guid id, [Bind("StudentID,StudentCode,FirstName,LastName,FullName,BirthDay,SubjectGroup,IsActive,IsRegistered,SubjectID")] Student student, string SecurityCode)
         {
             if (id != student.StudentID)
             {
@@ -279,6 +280,7 @@ namespace QuanLyCaThi.Controllers
                                     std.LastName = dt.Rows[i][2].ToString();
                                     std.FullName = _strPro.LocDau(std.FirstName.Trim()) + " " + _strPro.LocDau(std.LastName.Trim());
                                     std.SubjectGroup = dt.Rows[i][3].ToString();
+                                    std.IsRegistered = false;
                                     if(dt.Rows[i][4].ToString() == "1") std.IsActive = false;
                                     else std.IsActive = true;
                                     std.SubjectID = subjectId;

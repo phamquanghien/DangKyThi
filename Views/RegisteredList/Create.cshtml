@@ -1,13 +1,14 @@
-@model QuanLyCaThi.Models.DangKyThi
+@model QuanLyCaThi.Models.ExamRegistration
 
 @{
     ViewData["Title"] = "Index";
+    Layout = "~/Views/Shared/_LayoutAdmin.cshtml";
 }
 <div class="row w3-padding">
     <div class="w3-row w3-blue ud-max-width-50 ud-center">
-            <h1 class="w3-center">Đăng ký thi</h1>
+            <h1 class="w3-center">Admin đăng ký thi cho sinh viên</h1>
         </div>
-    <form asp-action="Index" class="w3-padding w3-card-4 ud-max-width-50 ud-center">
+    <form asp-action="Create" class="w3-padding w3-card-4 ud-max-width-50 ud-center">
         <div class="w3-row">
             <h2>@ViewBag.infoSuccess</h2>
         </div>
@@ -15,6 +16,10 @@
             <div asp-validation-summary="ModelOnly" class="text-danger"></div>
         </div>
         <div class="w3-row">
+            <label>Mã xác thực:</label>
+            <input name="SecurityCode" type="password" class="w3-input w3-border w3-border-blue w3-round" />
+        </div>
+        <div class="w3-row w3-margin-top">
             <div class="w3-col l5">
                 <div class="w3-row">
                     <label>Mã Sinh viên:</label>
@@ -38,19 +43,16 @@
             <div class="w3-col l5">
                 <div class="w3-row">
                     <label>Chọn Học phần đăng ký thi:</label>
-                    <select onchange="GetSubjectGroupByStudentID();" asp-for="SubjectID" class ="w3-select w3-border w3-border-blue w3-round w3-white w3-padding w3-large" asp-items="ViewBag.SubjectID">
+                    <select onchange="GetExamTimeBySubjectAmin();" asp-for="SubjectID" class ="w3-select w3-border w3-border-blue w3-round w3-white w3-padding w3-large" asp-items="ViewBag.SubjectID">
                         <option value="-1">Chọn học phần</option>
                     </select>
                 </div>
             </div>
             <div class="w3-col l6 w3-right">
                 <div class="w3-row">
-                    <div id="SubjectGroup"></div>
+                    <div id="ExamTime"></div>
                 </div>
             </div>
-        </div>
-        <div class="w3-row w3-margin-top w3-large">
-            <div id="ExamTime"></div>
         </div>
         <hr>
         <div class="w3-row w3-margin">

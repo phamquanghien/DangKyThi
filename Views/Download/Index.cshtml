@@ -1,0 +1,35 @@
+@model QuanLyCaThi.Models.ExamRegistration
+
+@{
+    ViewData["Title"] = "Index";
+    Layout = "~/Views/Shared/_LayoutAdmin.cshtml";
+}
+<div class="row w3-padding">
+    <div class="w3-row w3-blue ud-max-width-50 ud-center">
+            <h1 class="w3-center">Tải danh sách sinh viên</h1>
+        </div>
+    <form class="w3-padding w3-card-4 ud-max-width-50 ud-center">
+        <div class="w3-row w3-margin-top">
+            <div class="w3-col l5">
+                <div class="w3-row">
+                    <label>Chọn Học phần đăng ký thi:</label>
+                    <select onchange="GetExamTimeBySubjectAmin();" asp-for="SubjectID" class ="w3-select w3-border w3-border-blue w3-round w3-white w3-padding w3-large" asp-items="ViewBag.SubjectID">
+                        <option value="-1">Chọn học phần</option>
+                    </select>
+                </div>
+            </div>
+            <div class="w3-col l6 w3-right">
+                <div class="w3-row">
+                    <div id="ExamTime"></div>
+                </div>
+            </div>
+        </div>
+        <hr>
+        <div class="w3-row w3-margin">
+            <div class="form-group">
+                <input type="submit" formaction="@Url.Action("getRegisteredList")" value="Download danh sách đã đăng ký" class="btn btn-primary" />
+                <input type="submit" formaction="@Url.Action("getUnRegisteredList")" value="Download danh sách chưa đăng ký" class="btn btn-success w3-right" />
+            </div>
+        </div>
+    </form>
+</div>

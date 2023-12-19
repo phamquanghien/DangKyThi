@@ -2,7 +2,7 @@ using System.ComponentModel.DataAnnotations;
 
 namespace QuanLyCaThi.Models
 {
-    public class DangKyThi
+    public class ExamRegistration
     {
         [Required(ErrorMessage = "Vui lòng nhập mã sinh viên!")]
         public string StudentCode { get; set; }

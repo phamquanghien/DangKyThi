@@ -1,4 +1,4 @@
-@model QuanLyCaThi.Models.ListRegisted
+@model QuanLyCaThi.Models.RegisteredList
 
 @{
     ViewData["Title"] = "Edit";
@@ -12,7 +12,7 @@
     <div class="col-md-4">
         <form asp-action="Edit">
             <div asp-validation-summary="ModelOnly" class="text-danger"></div>
-            <input type="hidden" asp-for="ListRegistedID" />
+            <input type="hidden" asp-for="RegisteredListID" />
             <input type="hidden" asp-for="StudentID" />
             <input type="hidden" asp-for="SubjectID" />
             <div class="form-group">

@@ -3,7 +3,7 @@ function GetExamTimeBySubject() {
     var value = e.value;
     // var text = e.options[e.selectedIndex].text;
     $.ajax({
-        url: "/DangKyThi/GetExamTimeBySubject",
+        url: "/ExamRegistration/GetExamTimeBySubject",
         type: "GET",
         data: { subjectID:  value},
         success: function (response) {
@@ -32,7 +32,7 @@ function GetSubjectGroupByStudentID() {
     var e = document.getElementById("SubjectID");
     var value = e.value;
     $.ajax({
-        url: "/DangKyThi/GetSubjectGroupByStudentID",
+        url: "/ExamRegistration/GetSubjectGroupByStudentID",
         type: "GET",
         data: { subjectID:  value},
         success: function (response) {
@@ -57,7 +57,7 @@ function GetExamTimeBySubjectAmin() {
     var value = e.value;
     // var text = e.options[e.selectedIndex].text;
     $.ajax({
-        url: "/ListRegisted/GetExamTimeBySubject",
+        url: "/RegisteredList/GetExamTimeBySubject",
         type: "GET",
         data: { subjectID:  value},
         success: function (response) {

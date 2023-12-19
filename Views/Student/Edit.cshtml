@@ -12,6 +12,7 @@
         <form asp-action="Edit">
             <div asp-validation-summary="ModelOnly" class="text-danger"></div>
             <input type="hidden" asp-for="StudentID" />
+            <input type="hidden" asp-for="IsRegistered" />
             <div class="form-group">
                 <label class="control-label">Khoá bảo mật</label>
                 <input type="password" required name="SecurityCode" class="form-control" />

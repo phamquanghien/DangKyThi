@@ -24,6 +24,7 @@ namespace QuanLyCaThi.Models
         public string SubjectGroup { get; set; }
         [Display(Name = "Dự thi")]
         public bool IsActive { get; set; }
+        public bool IsRegistered { get; set; }
         public Guid SubjectID { get; set; }
         [ForeignKey("SubjectID")]
         public Subject? Subject { get; set; }

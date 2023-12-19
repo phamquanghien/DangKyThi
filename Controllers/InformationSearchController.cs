@@ -5,11 +5,11 @@ using QuanLyCaThi.Data;
 
 namespace QuanLyCaThi.Controllers
 {
-    public class TraCuuController : Controller
+    public class InformationSearchController : Controller
     {
         private readonly ApplicationDbContext _context;
 
-        public TraCuuController(ApplicationDbContext context)
+        public InformationSearchController(ApplicationDbContext context)
         {
             _context = context;
         }
@@ -23,7 +23,7 @@ namespace QuanLyCaThi.Controllers
         [HttpPost]
         public async Task<IActionResult> Index(string StudentCode, Guid SubjectID)
         {
-            var query = (from registed in _context.ListRegisted
+            var query = (from registed in _context.RegisteredList
                         join std in _context.Student on registed.StudentID equals std.StudentID
                         join subject in _context.Subject on registed.SubjectID equals subject.SubjectID
                         join time in _context.ExamTime on registed.ExamTimeID equals time.ExamTimeID
