@@ -10,6 +10,13 @@
     <a class="btn btn-primary w3-right w3-card-4 w3-margin-left" asp-action="Create">+ Add</a>
 </div>
 <hr>
+<div class="w3-row">
+    <form asp-action="Index">
+        <input type="text" name="keySearch" class="w3-input w3-border w3-border-blue w3-round w3-col l3" placeholder="Nhập mã hoặc tên sinh viên">
+        <input type="submit" class="w3-input w3-border w3-border-blue w3-round w3-col l1 w3-margin-left w3-white w3-hover-aqua" value="Search">
+    </form>
+</div>
+<hr>
 <table class="table">
     <thead>
         <tr>
@@ -38,9 +45,7 @@
                 @Html.DisplayFor(modelItem => item.ExamTime.ExamTimeName)
             </td>
             <td>
-                <a asp-action="Edit" asp-route-id="@item.ListRegistedID">Edit</a> |
-                <a asp-action="Details" asp-route-id="@item.ListRegistedID">Details</a> |
-                <a asp-action="Delete" asp-route-id="@item.ListRegistedID">Delete</a>
+                <a asp-action="Edit" asp-route-id="@item.ListRegistedID">Chuyển ca thi</a>
             </td>
         </tr>
 }

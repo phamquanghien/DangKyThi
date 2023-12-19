@@ -29,57 +29,16 @@ namespace QuanLyCaThi.Controllers
             ViewBag.countStudent = model.ToList().Count();
             return View(await model.ToListAsync());
         }
-
-        // GET: ListRegisted/Details/5
-        public async Task<IActionResult> Details(Guid? id)
+        [HttpPost]
+        public async Task<IActionResult> Index(string? keySearch)
         {
-            if (id == null || _context.ListRegisted == null)
-            {
-                return NotFound();
+            if(!string.IsNullOrEmpty(keySearch) && keySearch != "") {
+                keySearch = _strPro.LocDau(keySearch);
             }
-
-            var listRegisted = await _context.ListRegisted
-                .Include(l => l.ExamTime)
-                .Include(l => l.Student)
-                .Include(l => l.Subject)
-                .FirstOrDefaultAsync(m => m.ListRegistedID == id);
-            if (listRegisted == null)
-            {
-                return NotFound();
-            }
-
-            return View(listRegisted);
+            var model = _context.ListRegisted.Include(l => l.ExamTime).Include(l => l.Student).Include(l => l.Subject).Where(m => m.Student.StudentCode.Contains(keySearch) || m.Student.FullName.Contains(keySearch));
+            ViewBag.countStudent = model.ToList().Count();
+            return View(await model.ToListAsync());
         }
-
-        // GET: ListRegisted/Create
-        // public IActionResult Create()
-        // {
-        //     ViewData["ExamTimeID"] = new SelectList(_context.ExamTime, "ExamTimeID", "ExamTimeName");
-        //     ViewData["StudentID"] = new SelectList(_context.Student, "StudentID", "FullName");
-        //     ViewData["SubjectID"] = new SelectList(_context.Subject, "SubjectID", "SubjectName");
-        //     return View();
-        // }
-
-        // // POST: ListRegisted/Create
-        // // To protect from overposting attacks, enable the specific properties you want to bind to.
-        // // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
-        // [HttpPost]
-        // [ValidateAntiForgeryToken]
-        // public async Task<IActionResult> Create([Bind("ListRegistedID,ExamTimeID,StudentID,SubjectID")] ListRegisted listRegisted)
-        // {
-        //     if (ModelState.IsValid)
-        //     {
-        //         listRegisted.ListRegistedID = Guid.NewGuid();
-        //         _context.Add(listRegisted);
-        //         await _context.SaveChangesAsync();
-        //         return RedirectToAction(nameof(Index));
-        //     }
-        //     ViewData["ExamTimeID"] = new SelectList(_context.ExamTime, "ExamTimeID", "ExamTimeName", listRegisted.ExamTimeID);
-        //     ViewData["StudentID"] = new SelectList(_context.Student, "StudentID", "FullName", listRegisted.StudentID);
-        //     ViewData["SubjectID"] = new SelectList(_context.Subject, "SubjectID", "SubjectName", listRegisted.SubjectID);
-            
-        //     return View(listRegisted);
-        // }
         public async Task<IActionResult> Create()
         {
             ViewData["SubjectID"] = new SelectList(_context.Subject, "SubjectID", "SubjectName");
