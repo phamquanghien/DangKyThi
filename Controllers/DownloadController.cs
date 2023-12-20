@@ -43,7 +43,7 @@ namespace QuanLyCaThi.Controllers
                 if(query.Count > 0)
                 {
                     fileName = query.First().SubjectCode + "_" + query.First().SubjectName;
-                    fileName = _strPro.LocDau(fileName.Trim());
+                    fileName = _strPro.RemoveAccents(fileName.Trim());
                 }
                 
             }
@@ -95,7 +95,7 @@ namespace QuanLyCaThi.Controllers
                 if(query.Count > 0)
                 {
                     fileName = query.First().SubjectCode + "_" + query.First().SubjectName;
-                    fileName = _strPro.LocDau(fileName.Trim());
+                    fileName = _strPro.RemoveAccents(fileName.Trim());
                 }
                 
             }

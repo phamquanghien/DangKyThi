@@ -11,7 +11,11 @@
 <div class="w3-row">
     <form asp-controller="Student" asp-action="Index" method="post">
         <div class="w3-col l3 w3-margin-right">
-            <select onchange="GetSubjectGroupBySubjectID();" name="sID" id="SubjectID" class="w3-select w3-border w3-round w3-white w3-padding w3-mobile w3-col w3-large w3-margin-right">
+            <input type="text" placeholder="Enter key word to search" class="w3-input w3-border w3-border-blue w3-round" name="keySearch">
+        </div>
+        <div class="w3-col l3 w3-margin-right">
+            
+            <select onchange="GetSubjectGroupBySubjectID();" name="sID" id="SubjectID" class="w3-select w3-border w3-round w3-white w3-padding w3-mobile w3-large w3-margin-right">
                 <option value="">Chọn môn học</option>
                 @foreach (var subject in Model.Subject)
                 {
@@ -37,6 +41,9 @@
                 <label>LastName</label>
             </th>
             <th>
+                <label>FullName</label>
+            </th>
+            <th>
                 <label>SubjectGroup</label>
             </th>
             <th>
@@ -59,6 +66,9 @@
             </td>
             <td>
                 @Html.DisplayFor(modelItem => item.LastName)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.FullName)
             </td>
             <td>
                 @Html.DisplayFor(modelItem => item.SubjectGroup)

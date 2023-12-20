@@ -24,9 +24,13 @@ namespace QuanLyCaThi.Controllers
             _checkSecurityKey = checkSecurityKey;
             _updateValue = updateValue;
         }
-        public ActionResult Index(Guid? sID, string? subjectGroup)
+        public ActionResult Index(Guid? sID, string? subjectGroup, string? keySearch)
         {
             var students = _context.Student.ToList();
+            if(!string.IsNullOrEmpty(keySearch) && keySearch != "")
+            {
+                students = students.Where(m => m.StudentCode.Contains(keySearch) || m.FullName.Contains(keySearch) || m.FirstName.Contains(keySearch) || m.LastName.Contains(keySearch)).ToList();
+            }
 
             if (sID.HasValue)
             {
@@ -99,7 +103,7 @@ namespace QuanLyCaThi.Controllers
         {
             student.IsActive = true;
             student.IsRegistered = false;
-            student.FullName = _strPro.LocDau(student.FirstName.Trim()) + " " + _strPro.LocDau(student.LastName.Trim());
+            student.FullName = _strPro.RemoveAccents(student.FirstName.Trim()) + " " + _strPro.RemoveAccents(student.LastName.Trim());
             if(string.IsNullOrEmpty(SecurityCode))
             {
                 ModelState.AddModelError("","Mã xác thực không được để trống!");
@@ -162,7 +166,7 @@ namespace QuanLyCaThi.Controllers
                     ModelState.AddModelError("","Mã xác thực không chính xác!");
                 }
                 else {
-                    student.FullName = _strPro.LocDau(student.FirstName.Trim()) + " " + _strPro.LocDau(student.LastName.Trim());
+                    student.FullName = _strPro.RemoveAccents(student.FirstName.Trim()) + " " + _strPro.RemoveAccents(student.LastName.Trim());
                     if (ModelState.IsValid)
                     {
                         try
@@ -278,7 +282,7 @@ namespace QuanLyCaThi.Controllers
                                     std.StudentCode = dt.Rows[i][0].ToString();
                                     std.FirstName = dt.Rows[i][1].ToString();
                                     std.LastName = dt.Rows[i][2].ToString();
-                                    std.FullName = _strPro.LocDau(std.FirstName.Trim()) + " " + _strPro.LocDau(std.LastName.Trim());
+                                    std.FullName = _strPro.RemoveAccents(std.FirstName.Trim()) + " " + _strPro.RemoveAccents(std.LastName.Trim());
                                     std.SubjectGroup = dt.Rows[i][3].ToString();
                                     std.IsRegistered = false;
                                     if(dt.Rows[i][4].ToString() == "1") std.IsActive = false;
@@ -302,11 +306,22 @@ namespace QuanLyCaThi.Controllers
         }
         public IActionResult DataStandardization()
         {
-            var message = "";
-            var checkUpdateData = _updateValue.UpdateValueRegisted();
-            if(checkUpdateData == true) message = "Dữ liệu đã được chuẩn hoá thành công";
-            else message = "Dữ liệu đã chuẩn hoá";
-            ViewBag.info = message;
+            var message1 = "UpdateStudentList => Fail"; var UpdateStudentList = _updateValue.UpdateStudentList();
+            var message2 = "UpdateStudentName => Fail"; var UpdateStudentName = _updateValue.UpdateStudentName();
+            var message3 = "UpdateRegisteredList => Fail"; var UpdateRegisteredList = _updateValue.UpdateRegisteredList();
+            var message4 = "UpdateIsRegistered => Fail"; var UpdateIsRegistered = _updateValue.UpdateIsRegistered();
+            var message5 = "UpdateValueRegistered => Fail"; var UpdateValueRegistered = _updateValue.UpdateValueRegistered();
+            
+            if(UpdateStudentList == true) message1 = "UpdateStudentList => Done";
+            if(UpdateStudentName == true) message2 = "UpdateStudentName => Done";
+            if(UpdateRegisteredList == true) message3 = "UpdateRegisteredList => Done";
+            if(UpdateIsRegistered == true) message4 = "UpdateIsRegistered => Done";
+            if(UpdateValueRegistered == true) message5 = "UpdateValueRegistered => Done";
+            ViewBag.info1 = message1;
+            ViewBag.info2 = message2;
+            ViewBag.info3 = message3;
+            ViewBag.info4 = message4;
+            ViewBag.info5 = message5;
             return View();
         }
         private bool StudentExists(Guid id)

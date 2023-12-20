@@ -11,6 +11,8 @@ namespace QuanLyCaThi.Models
         public string ExamTimeName { get; set; }
         public string StartTime { get; set;}
         public string FinishTime { get; set; }
+        [DataType(DataType.Date)]
+        [DisplayFormat(DataFormatString = "{0:dd/MM/yyyy}", ApplyFormatInEditMode = true)]
         public DateTime ExamDate { get; set; }
         public int MaxValue { get; set; }
         public int RegistedValue { get; set; }

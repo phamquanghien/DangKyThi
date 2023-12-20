@@ -20,10 +20,10 @@ public class HomeController : Controller
 
     public IActionResult Index()
     {
-        // var check = checkSKey.CheckSecurity(1,"12312300");
-        // var check2 = checkSKey.CheckSecurity(2,"123123");
-        // ViewBag.Result = check + "-" + check2;
-        return View();
+        var model = _context.RegisteredList.ToList();
+        var model2 = _context.RegisteredList.Select(m => new {m.StudentID, m.SubjectID}).Distinct().ToList();
+        ViewBag.countStudent = model2.Count();
+        return View(model);
     }
 
     public IActionResult Privacy()

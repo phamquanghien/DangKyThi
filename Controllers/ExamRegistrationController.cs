@@ -42,34 +42,43 @@ namespace QuanLyCaThi.Controllers
                 }
                 else
                 {
-                    dkt.FullName = _strPro.LocDau(dkt.FullName);
+                    dkt.FullName = _strPro.RemoveAccents(dkt.FullName);
                     //kiem tra thong tin sinh vien co dung khong
                     var std = await _context.Student.Where(m => m.StudentCode == dkt.StudentCode && m.FullName == dkt.FullName && m.SubjectID == dkt.SubjectID && m.SubjectGroup == subjectGroup).FirstOrDefaultAsync();
                     if(std != null)
                     {
                         if(std.IsActive == true)
                         {
-                            //kiem tra thong tin ca thi co dung khong
-                            var examTime = await _context.ExamTime.Where(m => m.ExamTimeID == dkt.ExamTimeID && m.SubjectID == dkt.SubjectID).FirstOrDefaultAsync();
-                            if(examTime != null)
+                            if(std.IsRegistered != true)
                             {
-                                //tat ca cac thong tin deu hop le => dang ky thi cho sinh vien
-                                var registeredList = new RegisteredList();
-                                registeredList.RegisteredListID = Guid.NewGuid();
-                                registeredList.StudentID = std.StudentID;
-                                registeredList.SubjectID = dkt.SubjectID;
-                                registeredList.ExamTimeID = dkt.ExamTimeID;
-                                _context.Add(registeredList);
-                                //cap nhat thong tin so luong sinh vien da dang ky ca thi
-                                var exTime = await _context.ExamTime.FindAsync(dkt.ExamTimeID);
-                                examTime.RegistedValue = exTime.RegistedValue + 1;
-                                if(examTime.RegistedValue >= examTime.MaxValue) examTime.IsFull = true;
-                                //luu thong tin vao database
-                                await _context.SaveChangesAsync();
-                                ViewBag.infoSuccess = "Sinh viên " + dkt.FullName + " (" + dkt.StudentCode + ") đăng ký ca thi thành công!";
-                                //return RedirectToAction(nameof(Index));
-                            } else {
-                                ModelState.AddModelError("","Ca thi không hợp lệ. Vui lòng liên hệ với GV để được hỗ trợ.");
+                                //kiem tra thong tin ca thi co dung khong
+                                var examTime = await _context.ExamTime.Where(m => m.ExamTimeID == dkt.ExamTimeID && m.SubjectID == dkt.SubjectID).FirstOrDefaultAsync();
+                                if(examTime != null)
+                                {
+                                    //tat ca cac thong tin deu hop le => dang ky thi cho sinh vien
+                                    var registeredList = new RegisteredList();
+                                    registeredList.RegisteredListID = Guid.NewGuid();
+                                    registeredList.StudentID = std.StudentID;
+                                    registeredList.SubjectID = dkt.SubjectID;
+                                    registeredList.ExamTimeID = dkt.ExamTimeID;
+                                    _context.Add(registeredList);
+                                    //cap nhat thong tin so luong sinh vien da dang ky ca thi
+                                    var exTime = await _context.ExamTime.FindAsync(dkt.ExamTimeID);
+                                    examTime.RegistedValue = exTime.RegistedValue + 1;
+                                    if(examTime.RegistedValue >= examTime.MaxValue) examTime.IsFull = true;
+                                    //cap nhat trang thai sinh vien đa dang ky thi
+                                    var student = _context.Student.Where(m => m.SubjectID == registeredList.SubjectID && m.StudentID == registeredList.StudentID).First();
+                                    student.IsRegistered = true;
+                                    //luu thong tin vao database
+                                    await _context.SaveChangesAsync();
+                                    ViewBag.infoSuccess = "Sinh viên " + dkt.FullName + " (" + dkt.StudentCode + ") đăng ký ca thi thành công!";
+                                    //return RedirectToAction(nameof(Index));
+                                } else {
+                                    ModelState.AddModelError("","Ca thi không hợp lệ. Vui lòng liên hệ với GV để được hỗ trợ.");
+                                }
+                            }
+                            else {
+                                ModelState.AddModelError("","Sinh viên đã đăng ký ca thi, không được đăng ký lại!");
                             }
                         }
                         //kiem tra sinh vien co bi cam thi khong

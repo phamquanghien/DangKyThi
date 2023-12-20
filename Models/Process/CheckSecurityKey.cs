@@ -19,7 +19,8 @@ namespace QuanLyCaThi.Models.Process
                 var key = model[0].SecurityKey;
                 var checkey = StringProcess.CreateMD5Hash(sCode);
                 if(key == checkey) check = true;
-            } else if(i == 2) {
+            }
+            if(i == 2) {
                 var key = model[1].SecurityKey;
                 var checkey = StringProcess.CreateMD5Hash(sCode);
                 if(key == checkey) check = true;

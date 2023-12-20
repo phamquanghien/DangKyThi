@@ -1,8 +1,53 @@
-﻿@{
-    ViewData["Title"] = "Home Page";
+﻿@model IEnumerable<QuanLyCaThi.Models.RegisteredList>
+
+@{
+    ViewData["Title"] = "Index";
+    Layout = "~/Views/Shared/_LayoutAdmin.cshtml";
 }
-<h2>@ViewBag.Results</h2>
-<div class="text-center">
-    <h1 class="display-4">Welcome</h1>
-    <p>Learn about <a href="https://docs.microsoft.com/aspnet/core">building Web apps with ASP.NET Core</a>.</p>
+
+<div>
+    <b>Danh sách Sinh viên (@ViewBag.countStudent)</b>
+    <a class="btn btn-primary w3-right w3-card-4 w3-margin-left" asp-action="Create">+ Add</a>
 </div>
+<hr>
+<div class="w3-row">
+    <form asp-action="Index">
+        <input type="text" name="keySearch" class="w3-input w3-border w3-border-blue w3-round w3-col l3" placeholder="Nhập mã hoặc tên sinh viên">
+        <input type="submit" class="w3-input w3-border w3-border-blue w3-round w3-col l1 w3-margin-left w3-white w3-hover-aqua" value="Search">
+    </form>
+</div>
+<hr>
+<table class="table">
+    <thead>
+        <tr>
+            <th>
+                @Html.DisplayNameFor(model => model.SubjectID)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.StudentID)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.ExamTimeID)
+            </th>
+            <th></th>
+        </tr>
+    </thead>
+    <tbody>
+@foreach (var item in Model) {
+        <tr>
+            <td>
+                @Html.DisplayFor(modelItem => item.SubjectID)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.StudentID)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.ExamTimeID)
+            </td>
+            <td>
+                <a asp-action="Edit" asp-route-id="@item.RegisteredListID">Chuyển ca thi</a>
+            </td>
+        </tr>
+}
+    </tbody>
+</table>

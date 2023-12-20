@@ -11,6 +11,7 @@ namespace QuanLyCaThi.Controllers
     {
         private readonly ApplicationDbContext _context;
         private readonly CheckSecurityKey _checkSecurityKey;
+        private readonly UpdateValue _updateValue;
         private StringProcess _strPro = new StringProcess();
         public RegisteredListController(ApplicationDbContext context, CheckSecurityKey checkSecurityKey)
         {
@@ -21,17 +22,18 @@ namespace QuanLyCaThi.Controllers
         // GET: RegisteredList
         public async Task<IActionResult> Index()
         {
-            var model = _context.RegisteredList.Include(l => l.ExamTime).Include(l => l.Student).Include(l => l.Subject);
+            var model = _context.RegisteredList.Include(l => l.ExamTime).Include(l => l.Student).Include(l => l.Subject).OrderByDescending(m => m.StudentID);
             ViewBag.countStudent = model.ToList().Count();
-            return View(await model.ToListAsync());
+            return View(await model.Take(20).ToListAsync());
         }
         [HttpPost]
         public async Task<IActionResult> Index(string? keySearch)
         {
             if(!string.IsNullOrEmpty(keySearch) && keySearch != "") {
-                keySearch = _strPro.LocDau(keySearch);
+                keySearch = _strPro.RemoveAccents(keySearch);
             }
-            var model = _context.RegisteredList.Include(l => l.ExamTime).Include(l => l.Student).Include(l => l.Subject).Where(m => m.Student.StudentCode.Contains(keySearch) || m.Student.FullName.Contains(keySearch));
+            var model = _context.RegisteredList.OrderByDescending(m => m.StudentID).Include(l => l.ExamTime).Include(l => l.Student).Include(l => l.Subject).Where(m => m.Student.StudentCode.Contains(keySearch) || m.Student.FullName.Contains(keySearch));
+            
             ViewBag.countStudent = model.ToList().Count();
             return View(await model.ToListAsync());
         }
@@ -51,7 +53,7 @@ namespace QuanLyCaThi.Controllers
                     ModelState.AddModelError("","Mã xác thực không chính xác!");
                 } else {
                     if (ModelState.IsValid) {
-                        dkt.FullName = _strPro.LocDau(dkt.FullName);
+                        dkt.FullName = _strPro.RemoveAccents(dkt.FullName);
                         //kiem tra thong tin sinh vien co dung khong
                         var std = await _context.Student.Where(m => m.StudentCode == dkt.StudentCode && m.FullName == dkt.FullName && m.SubjectID == dkt.SubjectID).FirstOrDefaultAsync();
                         if(std != null) {
@@ -70,6 +72,9 @@ namespace QuanLyCaThi.Controllers
                                 var exTime = await _context.ExamTime.FindAsync(dkt.ExamTimeID);
                                 examTime.RegistedValue = exTime.RegistedValue + 1;
                                 if(examTime.RegistedValue >= examTime.MaxValue) examTime.IsFull = true;
+                                //cap nhat trang thai sinh vien đa dang ky thi
+                                var student = _context.Student.Where(m => m.SubjectID == registered.SubjectID && m.StudentID == registered.StudentID).First();
+                                student.IsRegistered = true;
                                 //luu thong tin vao database
                                 await _context.SaveChangesAsync();
                                 ViewBag.infoSuccess = "Sinh viên " + dkt.FullName + " (" + dkt.StudentCode + ") đăng ký ca thi thành công!";
@@ -131,34 +136,45 @@ namespace QuanLyCaThi.Controllers
         // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Edit(Guid id, [Bind("RegisteredListID,ExamTimeID,StudentID,SubjectID")] RegisteredList registeredList)
+        public async Task<IActionResult> Edit(Guid id, [Bind("RegisteredListID,ExamTimeID,StudentID,SubjectID")] RegisteredList registeredList, string SecurityCode)
         {
             if (id != registeredList.RegisteredListID)
             {
                 return NotFound();
             }
-
-            if (ModelState.IsValid)
+            if(string.IsNullOrEmpty(SecurityCode))
             {
-                try
-                {
-                    _context.Update(registeredList);
-                    await _context.SaveChangesAsync();
-                }
-                catch (DbUpdateConcurrencyException)
-                {
-                    if (!ListRegistedExists(registeredList.RegisteredListID))
+                ModelState.AddModelError("","Mã xác thực không được để trống!");
+            } else {
+                var checkKey = _checkSecurityKey.CheckSecurity(2,SecurityCode);
+                if(checkKey==false) {
+                    ModelState.AddModelError("","Mã xác thực không chính xác!");
+                } else {
+                    if (ModelState.IsValid)
                     {
-                        return NotFound();
-                    }
-                    else
-                    {
-                        throw;
+                        try
+                        {
+                            _context.Update(registeredList);
+                            await _context.SaveChangesAsync();
+                        }
+                        catch (DbUpdateConcurrencyException)
+                        {
+                            if (!ListRegistedExists(registeredList.RegisteredListID))
+                            {
+                                return NotFound();
+                            }
+                            else
+                            {
+                                throw;
+                            }
+                        }
+                        return RedirectToAction(nameof(Index));
                     }
                 }
-                return RedirectToAction(nameof(Index));
             }
-            ViewData["ExamTimeID"] = new SelectList(_context.ExamTime, "ExamTimeID", "ExamTimeID", registeredList.ExamTimeID);
+
+            
+            ViewData["ExamTimeID"] = new SelectList(_context.ExamTime, "ExamTimeID", "ExamTimeName", registeredList.ExamTimeID);
             ViewData["StudentID"] = new SelectList(_context.Student, "StudentID", "StudentID", registeredList.StudentID);
             ViewData["SubjectID"] = new SelectList(_context.Subject, "SubjectID", "SubjectID", registeredList.SubjectID);
             return View(registeredList);
